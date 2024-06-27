@@ -27,8 +27,8 @@ const uploadFileService = async (body, file, logdInUser) => {
 
   let filePath = path.substring(path.indexOf('public//') + 8);
 
+  console.log(filePath, "/////////////////////////////////////////////////////////");
 
-  console.log(filePath,"/////////////////////////////////////////////////////////");
   const result = await PDF.create({
     name: filename,
     file_path: filePath,
@@ -43,11 +43,16 @@ const uploadFileService = async (body, file, logdInUser) => {
 
 const getAllFiles = async (pagename) => {
   if (pagename) {
-    const result = await PDF.find({ pagename: pagename });
-    return new ApiResponse(200, result, "File get successfully");
+    const result = await PDF.find({ pagename: pagename }).sort({ created_at: -1 });
+    if (result.length > 0) {
+      return new ApiResponse(200, result, "File get successfully");
+    }
+    else {
+      throw new ApiError(404, "File not found");
+    }
   }
 
-  const result = await PDF.find();
+  const result = await PDF.find().sort({ created_at: -1 });
   return new ApiResponse(200, result, "File get successfully");
 };
 

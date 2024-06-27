@@ -21,9 +21,13 @@ app.use(cookieParser());
 // import Routes 
 import userRoute from './routes/user.routes.js';
 import fileRoute from './routes/pdf_File.routes.js';
+import mediaRoute from './routes/media.routes.js';
+
 
 
 app.use("/api/v1/users", userRoute)
 app.use("/api/v1/file", fileRoute)
+app.use("/api/v1/media", mediaRoute)
+
 
 export { app } 
