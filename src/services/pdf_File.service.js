@@ -2,6 +2,8 @@ import { PDF } from "../model/pdf_File.model.js";
 import { User } from "../model/user.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
+import fs from 'fs';
+import path from 'path';
 
 const uploadFileService = async (body, file, logdInUser) => {
   const { filename, pagename } = body;
@@ -61,6 +63,23 @@ const deleteFile = async (id) => {
     throw new ApiError(402, "Please provide the required fields");
   }
 
+  // Retrieve the file path from the database
+  const fileRecord = await PDF.findById(id);
+  if (!fileRecord) {
+    throw new ApiError(404, "File not found");
+  }
+
+  const filePath = `public//${fileRecord.file_path}`; // Assuming your schema has a 'filePath' field
+
+  // Delete the file from the filesystem
+  try {
+    fs.unlinkSync(filePath); // Use fs.unlinkSync for synchronous deletion, or fs.promises.unlink for async
+  } catch (error) {
+    console.error("Error deleting file from server:", error);
+    throw new ApiError(500, "Failed to delete file from server");
+  }
+
+  // Delete the record from the database
   const result = await PDF.findByIdAndDelete(id);
 
   if (!result) {
@@ -69,5 +88,6 @@ const deleteFile = async (id) => {
 
   return new ApiResponse(200, result, "File deleted successfully");
 };
+
 
 export { uploadFileService, getAllFiles, deleteFile };
