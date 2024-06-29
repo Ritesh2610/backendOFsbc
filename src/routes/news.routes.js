@@ -4,10 +4,10 @@ import *as newsController from "../controller/news.controller.js";
 
 const newsRoute = Router();
 
-newsRoute.post('/create',newsController.createNews)
-newsRoute.get('/get-all',newsController.getAllNews)
+newsRoute.post('/create',verifyJWT,newsController.createNews)
+newsRoute.get('/get-all',verifyJWT,newsController.getAllNews)
 newsRoute.get('/get-single',newsController.getSingleNews)
-newsRoute.delete('/delete-single/:id',newsController.deleteSingleNews)
+newsRoute.delete('/delete-single/:id',verifyJWT,newsController.deleteSingleNews)
 
 
 
